@@ -58,9 +58,16 @@ for n=-200:dt:t          %Loop de atualização dos gráficos
 
 	if(t>=0)			 %Acrescenta as fontes e correntes iniciais no momento t=0
 		V1(1) = Vf1;	 %Intruduz a fonte 1 para o caso 1
-		V2(1) = Vf1;	 %Introduz a fonte 2 para
-		V3(1) = Vf1;
+		V2(1) = Vf1;	 %Introduz a fonte 1 para o caso 2
+		V3(1) = Vf1;	 %Introduz a fonte 1 para o caso 3
 
+		V4(1) = Vf2;	 %Intruduz a fonte 2 para o caso 1
+		V5(1) = Vf2;	 %Introduz a fonte 2 para o caso 2
+		V6(1) = Vf2;	 %Introduz a fonte 2 para o caso 3
+
+		V4(1) = Vf2;	 %Intruduz a corrente da fonte 2 para o caso 1
+		V5(1) = Vf2;	 %Introduz a corrente da fonte 2 para o caso 2
+		V6(1) = Vf2;	 %Introduz a fonte 2 para o caso 3
 
 	for k=l-1:1		  %Loop de cálculo dos gráficos
 
