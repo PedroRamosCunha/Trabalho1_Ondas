@@ -53,7 +53,7 @@ I6 = zeros(1,2000);		%Vetor com I(n+1/2) valores calculados de corrente para os 
 
 %-------------------------------------- Vetores  auxiliares ----------------------------------------%
 %	Esses vetores auxiliares funcionam da seguinte forma:											%
-%	 - auxiliares de tensão são os valores de V atrasados em n	 								%
+%	 - auxiliares de tensão são os valores de V atrasados em n	 									%
 %	 - auxiliares de corrente são para valores em para tempo no instante n-1/2						%
 %---------------------------------------------------------------------------------------------------%
 V1aux = zeros(1,2000);		
@@ -74,7 +74,7 @@ I6aux = zeros(1,2000);
 h1 = figure('Name','Tensão e Corrente das fontes 1 e 2','NumberTitle','off');	%Abre uma janela genérica para receber os gráficos
 for n=-200:dt:t          %Loop de atualização dos gráficos
 
-	if(t>=0)			 %Acrescenta as fontes e correntes iniciais no momento t=0
+	if(t==0)			 %Acrescenta as fontes e correntes iniciais no momento t=0
 		V1(1) = Vf1;	 %Intruduz a fonte 1 para o caso 1
 		V2(1) = Vf1;	 %Introduz a fonte 1 para o caso 2
 		V3(1) = Vf1;	 %Introduz a fonte 1 para o caso 3
@@ -92,33 +92,70 @@ for n=-200:dt:t          %Loop de atualização dos gráficos
 		I6(1) = If2(3);	 %Introduz a corrente da fonte 2 para o caso 3
 	end
 
+		if(t==-100)			 %Acrescenta as fontes e correntes iniciais no momento t=0
+		V1aux(1) = Vf1;	 %Intruduz a fonte 1 para o caso 1
+		V2aux(1) = Vf1;	 %Introduz a fonte 1 para o caso 2
+		V3aux(1) = Vf1;	 %Introduz a fonte 1 para o caso 3
 
-	for k=l-2:3		  %Loop de cálculo dos gráficos
+		V4aux(1) = Vf2;	 %Intruduz a fonte 2 para o caso 1
+		V5aux(1) = Vf2;	 %Introduz a fonte 2 para o caso 2
+		V6aux(1) = Vf2;	 %Introduz a fonte 2 para o caso 3
 
-		I1(k)=c1*(V1aux(k)-V1aux(k))+c2*I1aux(k);
-		V1(k)=c3*(I1(k+1)-I1(k))+c4*V1(k);
+		I1aux(1) = If1(1);	 %Intruduz a corrente da fonte 2 para o caso 1
+		I2aux(1) = If1(2);	 %Introduz a corrente da fonte 2 para o caso 2
+		I3aux(1) = If1(3);	 %Introduz a corrente da fonte 2 para o caso 3
 
-		I2(k)=c1*(V2aux(k)-V2aux(k))+c2*I2aux(k);
-		V2(k)=c3*(I2(k+1)-I2(k))+c4*V2aux(k);
-
-		I3(k)=c1*(V3aux(k)-V3aux(k))+c2*I3aux(k);
-		V3(k)=c3*(I3(k+1)-I3(k))+c4*V3(k);
-
-		I4(k)=c1*(V4(k)-V4(k))+c2*I4aux(k);
-		V4(k)=c3*(I4(k+1)-I4(k))+c4*V4(k);
-
-		I5(k)=c1*(V5(k)-V5(k))+c2*I5aux(k);
-		V5(k)=c3*(I5(k+1)-I5(k))+c4*V5(k);
-
-		I6(k)=c1*(V6(k)-V6(k))+c2*I6aux(k);
-		V6(k)=c3*(I6(k+1)-I6(k))+c4*V6(k);
+		I4aux(1) = If2(1);	 %Intruduz a corrente da fonte 2 para o caso 1
+		I5aux(1) = If2(2);	 %Introduz a corrente da fonte 2 para o caso 2
+		I6aux(1) = If2(3);	 %Introduz a corrente da fonte 2 para o caso 3
 	end
+
+
+	for k=l-2:2		  %Loop de cálculo dos gráficos
+
+		I1(k)=c1*(V1aux(k+1)-V1aux(k-1))+c2*I1aux(k);
+		V1(k+1)=c3*(I1(k+2)-I1(k))+c4*V1aux(k+1);
+
+		I1(k)=c1*(V1aux(k+1)-V1aux(k-1))+c2*I1aux(k);
+		V1(k+1)=c3*(I1(k+2)-I1(k))+c4*V1aux(k+1);
+
+		I1(k)=c1*(V1aux(k+1)-V1aux(k-1))+c2*I1aux(k);
+		V1(k+1)=c3*(I1(k+2)-I1(k))+c4*V1aux(k+1);
+
+		I1(k)=c1*(V1aux(k+1)-V1aux(k-1))+c2*I1aux(k);
+		V1(k+1)=c3*(I1(k+2)-I1(k))+c4*V1aux(k+1);
+
+		I1(k)=c1*(V1aux(k+1)-V1aux(k-1))+c2*I1aux(k);
+		V1(k+1)=c3*(I1(k+2)-I1(k))+c4*V1aux(k+1);
+
+		I1(k)=c1*(V1aux(k+1)-V1aux(k-1))+c2*I1aux(k);
+		V1(k+1)=c3*(I1(k+2)-I1(k))+c4*V1aux(k+1);
+	end
+
+	%------------------ Passando os valores do Original para o auxiliar --------------------%
+	%																						%
+	%	Note: o vetor auxiliar sempre está um dt atrasado em relação ao seu Original 		%
+	%																						%
+	%---------------------------------------------------------------------------------------%
+	V1aux = V1(1,:);
+	V2aux = V2(1,:);
+	V3aux = V3(1,:);
+	V4aux = V4(1,:);
+	V5aux = V5(1,:);
+	V6aux = V6(1,:);
+
+	I1aux = I1(1,:);
+	I2aux = I2(1,:);
+	I3aux = I3(1,:);
+	I4aux = I4(1,:);
+	I5aux = I5(1,:);
+	I6aux = I5(1,:);
+
 
 	figure(h1)
 	s = strcat("Tempo: ",num2str(n)," ns");
 	%uicontrol('Style','text','String',s);
 	disp(s);
-	disp(;
 	%set(handler.text1, 'string', ['Result: ' num2str(x)])
 	tiledlayout(2,2)
 	nexttile
