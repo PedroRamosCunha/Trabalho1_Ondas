@@ -51,19 +51,23 @@ I5 = zeros(1,2000);		%Vetor com I(n+1/2) valores calculados de corrente para os 
 I6 = zeros(1,2000);		%Vetor com I(n+1/2) valores calculados de corrente para os dz no instante t para f1 Rl=100
 
 
-%-------------------------------------- Vetores auxiliares -----------------------------------------%
-V1aux = zeros(2,2000);		
-V2aux = zeros(2,2000);		
-V3aux = zeros(2,2000);		
-I1aux = zeros(2,2000);		
-I2aux = zeros(2,2000);		
-I3aux = zeros(2,2000);		
-V4aux = zeros(2,2000);		
-V5aux = zeros(2,2000);		
-V6aux = zeros(2,2000);		
-I4aux = zeros(2,2000);		
-I5aux = zeros(2,2000);		
-I6aux = zeros(2,2000);		
+%-------------------------------------- Vetores  auxiliares ----------------------------------------%
+%	Esses vetores auxiliares funcionam da seguinte forma:											%
+%	 - auxiliares de tensão são os valores de V atrasados em n	 								%
+%	 - auxiliares de corrente são para valores em para tempo no instante n-1/2						%
+%---------------------------------------------------------------------------------------------------%
+V1aux = zeros(1,2000);		
+V2aux = zeros(1,2000);		
+V3aux = zeros(1,2000);		
+I1aux = zeros(1,2000);		
+I2aux = zeros(1,2000);		
+I3aux = zeros(1,2000);		
+V4aux = zeros(1,2000);		
+V5aux = zeros(1,2000);		
+V6aux = zeros(1,2000);		
+I4aux = zeros(1,2000);		
+I5aux = zeros(1,2000);		
+I6aux = zeros(1,2000);		
 
 
 
@@ -88,25 +92,26 @@ for n=-200:dt:t          %Loop de atualização dos gráficos
 		I6(1) = If2(3);	 %Introduz a corrente da fonte 2 para o caso 3
 	end
 
+
 	for k=l-2:3		  %Loop de cálculo dos gráficos
 
-		I1(k)=c1*(V1(k)-V1(k))+c2*I1(k);
-		V1(k)=c3*(I1(k)-I1(k))+c4*V1(k);
+		I1(k)=c1*(V1aux(k)-V1aux(k))+c2*I1aux(k);
+		V1(k)=c3*(I1(k+1)-I1(k))+c4*V1(k);
 
-		I2(k)=c1*(V2(k)-V2(k))+c2*I2(k);
-		V2(k)=c3*(I2(k)-I2(k))+c4*V2(k);
+		I2(k)=c1*(V2aux(k)-V2aux(k))+c2*I2aux(k);
+		V2(k)=c3*(I2(k+1)-I2(k))+c4*V2aux(k);
 
-		I3(k)=c1*(V3(k)-V3(k))+c2*I3(k);
-		V3(k)=c3*(I3(k)-I3(k))+c4*V3(k);
+		I3(k)=c1*(V3aux(k)-V3aux(k))+c2*I3aux(k);
+		V3(k)=c3*(I3(k+1)-I3(k))+c4*V3(k);
 
-		I4(k)=c1*(V4(k)-V4(k))+c2*I4(k);
-		V4(k)=c3*(I4(k)-I4(k))+c4*V4(k);
+		I4(k)=c1*(V4(k)-V4(k))+c2*I4aux(k);
+		V4(k)=c3*(I4(k+1)-I4(k))+c4*V4(k);
 
-		I5(k)=c1*(V5(k)-V5(k))+c2*I5(k);
-		V5(k)=c3*(I5(k)-I5(k))+c4*V5(k);
+		I5(k)=c1*(V5(k)-V5(k))+c2*I5aux(k);
+		V5(k)=c3*(I5(k+1)-I5(k))+c4*V5(k);
 
-		I6(k)=c1*(V6(k)-V6(k))+c2*I6(k);
-		V6(k)=c3*(I6(k)-I6(k))+c4*V6(k);
+		I6(k)=c1*(V6(k)-V6(k))+c2*I6aux(k);
+		V6(k)=c3*(I6(k+1)-I6(k))+c4*V6(k);
 	end
 
 	figure(h1)
