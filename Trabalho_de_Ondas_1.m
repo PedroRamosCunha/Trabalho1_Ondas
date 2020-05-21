@@ -5,166 +5,116 @@
 % Gabriela Barion Vidal ----------- %
 % Rodrigo Bragato Piva ------------ %
 % Pedro Ramos Cunha --------------- %
-
-clc
-close all
-clear all
-
-%------------------------------- Definições iniciais para o sistema FDTD ------------------------%
-
-dv    =   10;               % delta v entre os pontos do eixo da tensao    (em milimetros)
-Nv    =   100;             % numero de pontos do eixo da tensao
-dz    =   10;                % delta t entre cada pontos                    (em nano segundos)
-Nz    =   100;              % numero de pontos do eixo do tempo			
-
-
-Z     =   (0:Nz-1)*dz;      % vetor das absissas
-T     =   (0:Nv-1)*dv;      % vetor das ordenadas
-
-%-------------------------------- Declaração de variáveis ----------------------------------------%
-
-mu0   =   2.013354451e-4;     % permissividade no vacuo em (V fs^2/e nm)
-ep0   =   55.26349597e-3;     % permissividade no vacuo em (e / V nm)
+clear all;
+close all;
 
 
 
+%-----------------------Constantes--------------------------------------%
+
+c  = 299792458; %velocidade da luz em m/s
+
+
+%---------------------- Definição de variáveis de controle -------------%
+
+l=1000;						%distância l definida pelo grupo de 1000mm (1m)
+dz=2000;					%número de divisões de dessa distancia que resultam no dz (1000/2000 -> dz=0.5)
+Z = linspace(l,0,l)			%distribuição uniforme dos pontos 'dz's ao longo da linha de transmissão
+uf = 1/(0.9*c);				%valor para atingir o ponto estacionário
+dt = 100;					%dt em nano segundo (ns)
+t  = 1.5*uf*10.^(12);		%valor tmaximo de amostragem do FDTD	
+
+%-----------------------Constantes calculadas---------------------------%
+c1 = dt*10.^(-12)/(1.85*10.^(-6)*0.0005);		%Equação de Cálculo da Constante
+c2 = 1;											%Valor da Constante Calculado
+c3 = dt*10.^(-12)/(7.4*10.^(-10)*0.0005);		%Equação de Cálculo da Constante
+c4 = 1;											%Valor da constante Calculado
+Vf1= 2;											%Valor inicial da Fonte 1
+Vf2= 1; 										%Valor Inicial da Fonte 2
+If1= [0 , 0.016 , 0.0089]						%Corrente inicial da corrente para Fonte 1 para os casos 1,2 e 3
+If2= [0 , 0.008 , 0.0044]						%Corrente inicial da corrente para Fonte 2 para os casos 1,2 e 3
+
+%--------------------------Calculo dos Vetores--------------------------%
+
+%inicializa todos os vetores como zero
+V1 = zeros(1,1000);		%Vetor com V valores calculados de tensão para os dz no instante t para f1 Rl=\infty
+V2 = zeros(1,1000);		%Vetor com V valores calculados de tensão para os dz no instante t para f1 Rl=0
+V3 = zeros(1,1000);		%Vetor com V valores calculados de tensão para os dz no instante t para f1 Rl=100
+I1 = zeros(1,1000);		%Vetor com I valores calculados de corrente para os dz no instante t para f1 Rl=\infty
+I2 = zeros(1,1000);		%Vetor com I valores calculados de corrente para os dz no instante t para f1 Rl=0
+I3 = zeros(1,1000);		%Vetor com I valores calculados de corrente para os dz no instante t para f1 Rl=100
+V4 = zeros(1,1000);		%Vetor com V valores calculados de tensão para os dz no instante t para f2 Rl=\infty
+V5 = zeros(1,1000);		%Vetor com V valores calculados de tensão para os dz no instante t para f2 Rl=0
+V6 = zeros(1,1000);		%Vetor com V valores calculados de tensão para os dz no instante t para f2 Rl=100
+I4 = zeros(1,1000);		%Vetor com I valores calculados de corrente para os dz no instante t para f1 Rl=\infty
+I5 = zeros(1,1000);		%Vetor com I valores calculados de corrente para os dz no instante t para f1 Rl=0
+I6 = zeros(1,1000);		%Vetor com I valores calculados de corrente para os dz no instante t para f1 Rl=100
 
 
 
 
+h1 = figure('Name','Tensão e Corrente das fontes 1 e 2','NumberTitle','off');	%Abre uma janela genérica para receber os gráficos
+for n=-200:dt:t          %Loop de atualização dos gráficos
+
+	if(t>=0)			 %Acrescenta as fontes e correntes iniciais no momento t=0
+		V1(1) = Vf1;	 %Intruduz a fonte 1 para o caso 1
+		V2(1) = Vf1;	 %Introduz a fonte 2 para
+		V3(1) = Vf1;
 
 
+	for k=l-1:1		  %Loop de cálculo dos gráficos
 
+		I1()=c1*(V1()-V1())*c2*I1();
+		V1()=c3*(I1()-I1())+c4*V1();
 
+		I2()=c1*(V2()-V2())*c2*I2();
+		V2()=c3*(I2()-I2())+c4*V2();
 
+		I3()=c1*(V3()-V3())*c2*I3();
+		V3()=c3*(I3()-I3())+c4*V3();
 
+		I4()=c1*(V4()-V4())*c2*I4();
+		V4()=c3*(I4()-I4())+c4*V4();
 
+		I5()=c1*(V5()-V5())*c2*I5();
+		V5()=c3*(I5()-I5())+c4*V5();
 
+		I6()=c1*(V6()-V6())*c2*I6();
+		V6()=c3*(I6()-I6())+c4*V6();
+	end
 
-
-
-
-
-
-
-
-
-
-
-
-%--------------------------------- areaagem -------------------------------------%
-
-	figure('Name','Valores de tensão e corrente na Linha de transmissão para Fonte 1','NumberTitle','off');
-for n=1:length(t)
-	tiledlayout(3,2) % Requires R2019b or later
-
-
-	%Fonte 1 Rl = infinito
+	figure(h1)
+	s = strcat("Tempo: ",num2str(n)," ns");
+	uicontrol('Style','text','String',s);
+	disp(s);
+	%set(handler.text1, 'string', ['Result: ' num2str(x)])
+	tiledlayout(2,2)
 	nexttile
-	area(Z,V1,'r','LineWidth',3)%Grafico da tensao 
-	title('Tensão para Rl=inf')
-	xlabel('dz(cm)')
-	ylabel('dv(v)')
-	grid on
-	grid minor
-	nexttile
-	area(Z,I1,'b','LineWidth',3)	%Grafico da corrente 
-	title('Corrente para Rl=inf')
-	xlabel('dz(cm)')
-	ylabel('i(A)')
-	grid on
-	grid minor
-
-	%Fonte 2 Rl = infinito
-	nexttile
-	area(Z,V2,'r','LineWidth',3)	%Grafico da tensao
-	title('Tensão para Rl=inf')
-	xlabel('dz(cm)')
-	ylabel('dv(v)') 
-	grid on
-	grid minor
-	nexttile
-	area(Z,I2,'b','LineWidth',3)	%Grafico da corrente
-	title('Corrente para Rl=inf')
-	xlabel('dz(cm)')
-	ylabel('i(A)')
-	grid on
-	grid minor
-
-	%Fonte 1 Rl = 0
-	nexttile
-	area(Z,V3,'r','LineWidth',3)	%Grafico da tensao 
-	title('Tensão para Rl=0')
-	xlabel('dz(cm)')
-	ylabel('dv(v)')
-	grid on
-	grid minor
-	nexttile
-	area(Z,I3,'b','LineWidth',3)	%Grafico da corrente 
-	title('Corrente para Rl=0')
-	xlabel('dz(cm)')
-	ylabel('i(A)')
-	grid on
-	grid minor
-	getframe();
-
-end
-
-	
-figure('Name','Valores de tensão e corrente na Linha de transmissão para fonte 2','NumberTitle','off');
-for n=1:length(t)
-	tiledlayout(3,2) % Requires R2019b or later
-	%Fonte 2 Rl = 0
-	nexttile
-	area(Z,V4,'r','LineWidth',3)	%Grafico da tensao
-	title('Tensão p/ Rl=0')
+	plot(Z,V1,Z,V2,Z,V3)
 	xlabel('dz(cm)')
 	ylabel('dv(v)') 
 	grid on
 	grid minor
 	nexttile
-	area(Z,I4,'b','LineWidth',3)	%Grafico da corrente 
-	title('Corrente p/ Rl=0')
+	plot(Z,I1,Z,I2,Z,I3)
 	xlabel('dz(cm)')
 	ylabel('i(A)')
 	grid on
 	grid minor
-
-
-	%Fonte 1 Rl = 100
+	legend('I(t) \rightarrow R_L = \infty','I(t) \rightarrow R_L = 0','I(t) \rightarrow R_L = 100\Omega')
 	nexttile
-	area(Z,V5, 'r','LineWidth',3)	%Grafico da tensao
-	title('Tensão para Rl=100')
+	plot(Z,V4,Z,V5,Z,V6)
 	xlabel('dz(cm)')
 	ylabel('dv(v)') 
 	grid on
 	grid minor
+	legend('V(t) \rightarrow R_L = \infty','V(t) \rightarrow R_L = 0','V(t) \rightarrow R_L = 100\Omega')
 	nexttile
-	area(Z,I6,'b','LineWidth',3)	%Grafico da corrente
-	title('Corrente para Rl=100')
+	plot(Z,I4,Z,I5,Z,I6)
 	xlabel('dz(cm)')
 	ylabel('i(A)')
 	grid on
 	grid minor
-
-	%Fonte 2 Rl = 100
-	nexttile
-	area(Z,V6, 'r','LineWidth',3)	%Grafico da tensao 
-	title('Tensão p/ Rl=100')
-	xlabel('dz(cm)')
-	ylabel('dv(v)')
-	grid on
-	grid minor 
-	nexttile
-	area(Z,I6,'b','LineWidth',3)	%Grafico da corrente
-	title('Corrente p/ Rl=100')
-	xlabel('dz(cm)')
-	ylabel('i(A)')
-	grid on
-	grid minor 
-
+	legend('I(t) \rightarrow R_L = \infty','I(t) \rightarrow R_L = 0','I(t) \rightarrow R_L = 100\Omega')
 	getframe();
 end
-
-
-
