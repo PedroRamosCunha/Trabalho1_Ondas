@@ -72,9 +72,9 @@ I6aux = zeros(1,2000);
 
 
 h1 = figure('Name','Tensão e Corrente das fontes 1 e 2','NumberTitle','off');	%Abre uma janela genérica para receber os gráficos
-for n=-200:dt:t          %Loop de atualização dos gráficos
+for n=0:t          %Loop de atualização dos gráficos
 
-	if(t==0)			 %Acrescenta as fontes e correntes iniciais no momento t=0
+		%Acrescenta as fontes e correntes iniciais no momento t=0
 		V1(1) = Vf1;	 %Intruduz a fonte 1 para o caso 1
 		V2(1) = Vf1;	 %Introduz a fonte 1 para o caso 2
 		V3(1) = Vf1;	 %Introduz a fonte 1 para o caso 3
@@ -90,9 +90,8 @@ for n=-200:dt:t          %Loop de atualização dos gráficos
 		I4(1) = If2(1);	 %Intruduz a corrente da fonte 2 para o caso 1
 		I5(1) = If2(2);	 %Introduz a corrente da fonte 2 para o caso 2
 		I6(1) = If2(3);	 %Introduz a corrente da fonte 2 para o caso 3
-	end
 
-		if(t==-100)			 %Acrescenta as fontes e correntes iniciais no momento t=0
+
 		V1aux(1) = Vf1;	 %Intruduz a fonte 1 para o caso 1
 		V2aux(1) = Vf1;	 %Introduz a fonte 1 para o caso 2
 		V3aux(1) = Vf1;	 %Introduz a fonte 1 para o caso 3
@@ -108,10 +107,9 @@ for n=-200:dt:t          %Loop de atualização dos gráficos
 		I4aux(1) = If2(1);	 %Intruduz a corrente da fonte 2 para o caso 1
 		I5aux(1) = If2(2);	 %Introduz a corrente da fonte 2 para o caso 2
 		I6aux(1) = If2(3);	 %Introduz a corrente da fonte 2 para o caso 3
-	end
 
 
-	for k=l-2:2		  %Loop de cálculo dos gráficos
+	for k=2:l-2		  %Loop de cálculo dos gráficos
 
 		I1(k)=c1*(V1aux(k+1)-V1aux(k-1))+c2*I1aux(k);
 		V1(k+1)=c3*(I1(k+2)-I1(k))+c4*V1aux(k+1);
@@ -157,33 +155,33 @@ for n=-200:dt:t          %Loop de atualização dos gráficos
 	%uicontrol('Style','text','String',s);
 	disp(s);
 	%set(handler.text1, 'string', ['Result: ' num2str(x)])
-	tiledlayout(2,2)
-	nexttile
+	%tiledlayout(2,2)
+	%nexttil
 	plot(Z,V1,Z,V2,Z,V3)
 	xlabel('dz(cm)')
 	ylabel('dv(v)') 
 	grid on
 	grid minor
-	nexttile
-	plot(Z,I1,Z,I2,Z,I3)
-	xlabel('dz(cm)')
-	ylabel('i(A)')
-	grid on
-	grid minor
-	legend('I(t) \rightarrow R_L = \infty','I(t) \rightarrow R_L = 0','I(t) \rightarrow R_L = 100\Omega')
-	nexttile
-	plot(Z,V4,Z,V5,Z,V6)
-	xlabel('dz(cm)')
-	ylabel('dv(v)') 
-	grid on
-	grid minor
-	legend('V(t) \rightarrow R_L = \infty','V(t) \rightarrow R_L = 0','V(t) \rightarrow R_L = 100\Omega')
-	nexttile
-	plot(Z,I4,Z,I5,Z,I6)
-	xlabel('dz(cm)')
-	ylabel('i(A)')
-	grid on
-	grid minor
-	legend('I(t) \rightarrow R_L = \infty','I(t) \rightarrow R_L = 0','I(t) \rightarrow R_L = 100\Omega')
+	%nexttile
+	%plot(Z,I1,Z,I2,Z,I3)
+	%xlabel('dz(cm)')
+	%ylabel('i(A)')
+	%grid on
+	%grid minor
+	%legend('I(t) \rightarrow R_L = \infty','I(t) \rightarrow R_L = 0','I(t) \rightarrow R_L = 100\Omega')
+	%nexttile
+	%plot(Z,V4,Z,V5,Z,V6)
+	%xlabel('dz(cm)')
+	%ylabel('dv(v)') 
+	%grid on
+	%grid minor
+	%legend('V(t) \rightarrow R_L = \infty','V(t) \rightarrow R_L = 0','V(t) \rightarrow R_L = 100\Omega')
+	%nexttile
+	%plot(Z,I4,Z,I5,Z,I6)
+	%xlabel('dz(cm)')
+	%ylabel('i(A)')
+	%grid on
+	%grid minor
+	%legend('I(t) \rightarrow R_L = \infty','I(t) \rightarrow R_L = 0','I(t) \rightarrow R_L = 100\Omega')
 	getframe();
 end
