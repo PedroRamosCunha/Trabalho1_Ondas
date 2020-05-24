@@ -7,10 +7,6 @@
 % Pedro Ramos Cunha --------------- %
 close all;
 
-%------------------------ Flags ---------------------------------------%
-	
-flag = 1;
-
 %-----------------------Constantes--------------------------------------%
 
 c  = 299792458; %velocidade da luz em m/s
@@ -25,8 +21,7 @@ Z = linspace(0,l,aux);				%distribuição uniforme dos pontos 'dz's ao longo da 
 uf = (0.9*c);						%valor para atingir o ponto estacionário
 maxt=dz/uf;						
 dt = 0.9*maxt*10^(12);				%dt em nano segundo (ns)
-t  = 10.^(12)*10*l/(uf);			%valor tmaximo de amostragem do FDTD
-tdesliga = 10.^(12)*l/(10*uf);	
+t  = 10.^(12)*10*l/(uf);			%valor tmaximo de amostragem do FDTD	
 %-----------------------Constantes calculadas---------------------------%
 c1 = -dt*10.^(-12)/(1.85*10.^(-7)*dz);				%Equação de Cálculo da Constante
 c2 = 1;											%Valor da Constante Calculado
@@ -55,7 +50,7 @@ Iaux = zeros(1,Valormax);
 
 
 
-button = menu('Qual Caso deseja visualizar o gráfico?','Fonte 1 para R = Infinito', 'Fonte 1 para R = 0', 'Fonte 1 para R 100 Ohms', 'Fonte 2 para R = Infinito', 'Fonte 2 para R = 0', 'Fonte 2 para R 100 Ohms');
+button = menu('Qual Caso deseja visualizar o gráfico?', 'Fonte 1 R_L \rightarrow \infty', 'Fonte 1 R_L \rightarrow 0', 'Fonte 1 R_L \rightarrow 100\Omega', 'Fonte 2 R_L \rightarrow \infty', 'Fonte 2 R_L \rightarrow 0','Fonte 2 R_L \rightarrow 100\Omega');
 
 
 if button == 1
@@ -63,63 +58,128 @@ if button == 1
 		%Acrescenta as fontes e correntes iniciais no momento t=0
 		V(1) = Vf1;	 	 	%Intruduz a fonte 1 para o caso 1
 		I(1) = If1(1);	 	 %Intruduz a corrente da fonte 2 para o caso 1
-		Iaux(1) = If1(1);	 %Intruduz a corrente da fonte 2 para o caso 1	
-		titulo = strcat("Tensão e Corrente das fonte 1 e Rl = Infinito");
+		I1aux(1) = If1(1);	 %Intruduz a corrente da fonte 2 para o caso 1	
+		titulo = strcat("Tensão e Corrente das fontes 1 e Rl = Infinito");
 		legendaTensao = strcat("V(t) \rightarrow R_L = \infty");
 		legendaCorrente = strcat("I(t) \rightarrow R_L = \infty");
+
+
+
+
+
 elseif button == 2
 
 
 		V(1) = Vf1;	 		 %Introduz a fonte 1 para o caso 2
 		I(1) = If1(2);	 	 %Introduz a corrente da fonte 2 para o caso 2	
 		Iaux(1) = If1(2);	 %Introduz a corrente da fonte 2 para o caso 2
-		titulo = strcat("Tensão e Corrente das fonte 1 e Rl = 0");
-		legendaTensao = strcat("V(t) \rightarrow R_L = 0");
-		legendaCorrente = strcat("I(t) \rightarrow R_L = 0");
+
+h1 = figure('Name','Tensão e Corrente das fontes 1 e Rl = 0','NumberTitle','off');	%Abre uma janela genérica para receber os gráficos
+for n=0:dt:t          %Loop de atualização dos gráficos
+
+
+	for k=2:Valormax-1		 %Loop de cálculo dos gráficos
+
+		I(k)=c1*(Vaux(k)-Vaux(k-1))+c2*Iaux(k);
+	end
+	for k=2:Valormax-1		 %Loop de cálculo dos gráficos
+
+		V(k)=c3*(I(k+1)-I(k))+c4*Vaux(k);
+	end
+
+	%------------------ Passando os valores do Original para o auxiliar --------------------%
+	%																						%
+	%	Note: o vetor auxiliar sempre está um dt atrasado em relação ao seu Original 		%
+	%																						%
+	%---------------------------------------------------------------------------------------%
+	Iaux=I(1,1:end);
+	Vaux=V(1,1:end);
+	figure(h1)
+	s = strcat("Tempo: ",num2str(n)," ps");
+	disp(s);
+	tiledlayout(2,1)
+	nexttile
+	plot(Z,V)
+	xlabel('Z(m)')
+	ylabel('U(V)') 
+	grid on
+	grid minor
+	legend('V(t) \rightarrow R_L = 0')
+	nexttile
+	plot(Z,I)
+	xlabel('Z (m)')
+	ylabel('i(A)')
+	grid on
+	grid minor
+	legend('I(t) \rightarrow R_L = 0')
+	getframe();
+end
+
+
+
 
 elseif button == 3
 		V(1) = Vf1;			 %Introduz a fonte 1 para o caso 3
 		I(1) = If1(3);		 %Introduz a corrente da fonte 2 para o caso 
 		Iaux(1) = If1(3);	 %Introduz a corrente da fonte 2 para o caso 2
-		titulo = strcat("Tensão e Corrente das fonte 1 e Rl = 100 Ohms");
-		legendaTensao = strcat("V(t) \rightarrow R_L = 100 \Omega");
-		legendaCorrente = strcat("I(t) \rightarrow R_L = 100 \Omega");
-	
+
+	h1 = figure('Name','Tensão e Corrente das fontes 1 e Rl = 100 Ohms','NumberTitle','off');	%Abre uma janela genérica para receber os gráficos
+for n=0:dt:t          %Loop de atualização dos gráficos
+
+
+	for k=2:Valormax-1		 %Loop de cálculo dos gráficos
+
+		I(k)=c1*(Vaux(k)-Vaux(k-1))+c2*Iaux(k);
+	end
+	for k=2:Valormax-1		 %Loop de cálculo dos gráficos
+
+		V(k)=c3*(I(k+1)-I(k))+c4*Vaux(k);
+	end
+
+	%------------------ Passando os valores do Original para o auxiliar --------------------%
+	%																						%
+	%	Note: o vetor auxiliar sempre está um dt atrasado em relação ao seu Original 		%
+	%																						%
+	%---------------------------------------------------------------------------------------%
+	Iaux=I(1,1:end);
+	Vaux=V(1,1:end);
+	figure(h1)
+	s = strcat("Tempo: ",num2str(n)," ps");
+	disp(s);
+	tiledlayout(2,1)
+	nexttile
+	plot(Z,V)
+	xlabel('Z(m)')
+	ylabel('U(V)') 
+	grid on
+	grid minor
+	legend('V(t) \rightarrow R_L = 100 \Omega')
+	nexttile
+	plot(Z,I)
+	xlabel('Z (m)')
+	ylabel('i(A)')
+	grid on
+	grid minor
+	legend('I(t) \rightarrow R_L = 100 \Omega')
+	getframe();
+end
+
+
+
 
 elseif button == 4
-		V(1) = Vf2;			 %Introduz a fonte 1 para o caso 3
-		I(1) = If2(1);		 %Introduz a corrente da fonte 2 para o caso 
-		Iaux(1) = If1(1);	 %Introduz a corrente da fonte 2 para o caso 2
-		titulo = strcat("Tensão e Corrente das fonte 2 e Rl = 100 Ohms");
-		legendaTensao = strcat("V(t) \rightarrow R_L = 100 \Omega");
-		legendaCorrente = strcat("I(t) \rightarrow R_L = 100 \Omega");
+	disp('Europa');
 elseif button == 5
-		V(1) = Vf2;			 %Introduz a fonte 1 para o caso 3
-		I(1) = If2(2);		 %Introduz a corrente da fonte 2 para o caso 
-		Iaux(1) = If1(2);	 %Introduz a corrente da fonte 2 para o caso 2
-		titulo = strcat("Tensão e Corrente das fonte 2 e Rl = 100 Ohms");
-		legendaTensao = strcat("V(t) \rightarrow R_L = 100 \Omega");
-		legendaCorrente = strcat("I(t) \rightarrow R_L = 100 \Omega");
+	disp('Africa');
 else
-		V(1) = Vf2;			 %Introduz a fonte 1 para o caso 3
-		I(1) = If2(3);		 %Introduz a corrente da fonte 2 para o caso 
-		Iaux(1) = If2(3);	 %Introduz a corrente da fonte 2 para o caso 2
-		titulo = strcat("Tensão e Corrente das fonte 2 e Rl = 100 Ohms");
-		legendaTensao = strcat("V(t) \rightarrow R_L = 100 \Omega");
-		legendaCorrente = strcat("I(t) \rightarrow R_L = 100 \Omega");
 end
 
 
 
 
 h1 = figure('Name',titulo,'NumberTitle','off');	%Abre uma janela genérica para receber os gráficos
-parfor n=0:dt:t          %Loop de atualização dos gráficos
+for n=0:dt:t          %Loop de atualização dos gráficos
 
-	if (flag==1) && (n>=tdesliga) && (button>=4)
-		V(1)	= 0;
-		Iaux(1)	= 0;
-		flag 	= 0;
-	end
 
 	for k=2:Valormax-1		 %Loop de cálculo dos gráficos
 

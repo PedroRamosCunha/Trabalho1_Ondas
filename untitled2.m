@@ -26,7 +26,7 @@ uf = (0.9*c);						%valor para atingir o ponto estacionário
 maxt=dz/uf;						
 dt = 0.9*maxt*10^(12);				%dt em nano segundo (ns)
 t  = 10.^(12)*10*l/(uf);			%valor tmaximo de amostragem do FDTD
-tdesliga = 10.^(12)*l/(10*uf);	
+tdesliga = 10.^(-12)*l/(10*uf);	
 %-----------------------Constantes calculadas---------------------------%
 c1 = -dt*10.^(-12)/(1.85*10.^(-7)*dz);				%Equação de Cálculo da Constante
 c2 = 1;											%Valor da Constante Calculado
@@ -67,6 +67,10 @@ if button == 1
 		titulo = strcat("Tensão e Corrente das fonte 1 e Rl = Infinito");
 		legendaTensao = strcat("V(t) \rightarrow R_L = \infty");
 		legendaCorrente = strcat("I(t) \rightarrow R_L = \infty");
+
+
+
+
 elseif button == 2
 
 
@@ -76,6 +80,8 @@ elseif button == 2
 		titulo = strcat("Tensão e Corrente das fonte 1 e Rl = 0");
 		legendaTensao = strcat("V(t) \rightarrow R_L = 0");
 		legendaCorrente = strcat("I(t) \rightarrow R_L = 0");
+
+
 
 elseif button == 3
 		V(1) = Vf1;			 %Introduz a fonte 1 para o caso 3
@@ -113,10 +119,11 @@ end
 
 
 h1 = figure('Name',titulo,'NumberTitle','off');	%Abre uma janela genérica para receber os gráficos
-parfor n=0:dt:t          %Loop de atualização dos gráficos
+for n=0:dt:t          %Loop de atualização dos gráficos
 
-	if (flag==1) && (n>=tdesliga) && (button>=4)
+	if (flag==1) && (t>=tdesliga) && (button>=4)
 		V(1)	= 0;
+		I(1)	= 0;
 		Iaux(1)	= 0;
 		flag 	= 0;
 	end
@@ -157,5 +164,6 @@ parfor n=0:dt:t          %Loop de atualização dos gráficos
 	legend(legendaCorrente)
 	getframe();
 end
+
 
 
