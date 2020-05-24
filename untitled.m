@@ -17,15 +17,15 @@ l=1;						%distância l definida pelo grupo de 1000mm (1m)
 aux=500;					%número de divisões de dessa distancia que resultam no dz (1000/2000 -> dz=0.5)
 Valormax =aux;
 dz=l/aux;
-Z = linspace(0,l,aux);		%distribuição uniforme dos pontos 'dz's ao longo da linha de transmissão
-uf = (0.9*c);				%valor para atingir o ponto estacionário
-dt = 0.5;					%dt em nano segundo (ns)
+Z = linspace(0,l,aux);			%distribuição uniforme dos pontos 'dz's ao longo da linha de transmissão
+uf = (0.9*c);					%valor para atingir o ponto estacionário
+maxt=dz/uf;						
+dt = 0.9*maxt*10^(12);				%dt em nano segundo (ns)
 t  = 10.^(12)*10*1/(uf);			%valor tmaximo de amostragem do FDTD	
-
 %-----------------------Constantes calculadas---------------------------%
-c1 = -dt*10.^(-12)/(10.^(-7)*dz);				%Equação de Cálculo da Constante
+c1 = -dt*10.^(-12)/(1.85*10.^(-7)*dz);				%Equação de Cálculo da Constante
 c2 = 1;											%Valor da Constante Calculado
-c3 = -dt*10.^(-12)/(10.^(-11)*dz);				%Equação de Cálculo da Constante
+c3 = -dt*10.^(-12)/(7.41*10.^(-11)*dz);				%Equação de Cálculo da Constante
 c4 = 1;											%Valor da constante Calculado
 Vf1= 2;											%Valor inicial da Fonte 1
 Vf2= 1; 										%Valor Inicial da Fonte 2
@@ -111,7 +111,7 @@ for n=0:dt:t          %Loop de atualização dos gráficos
 	Iaux=I1(1,1:end);
 	Vaux=V1(1,1:end);
 	figure(h1)
-	s = strcat("Tempo: ",num2str(n)," ns");
+	s = strcat("Tempo: ",num2str(n)," ps");
 	disp(s);
 	tiledlayout(2,1)
 	nexttile
@@ -159,7 +159,7 @@ for n=0:dt:t          %Loop de atualização dos gráficos
 
 
 	figure(h1)
-	s = strcat("Tempo: ",num2str(n)," ns");
+	s = strcat("Tempo: ",num2str(n)," ps");
 	disp(s);
 	%set(handler.text1, 'string', ['Result: ' num2str(x)])
 	tiledlayout(2,1)
@@ -205,7 +205,7 @@ for n=0:dt:t          %Loop de atualização dos gráficos
 
 
 	figure(h1)
-	s = strcat("Tempo: ",num2str(n)," ns");
+	s = strcat("Tempo: ",num2str(n)," ps");
 	disp(s);
 	%set(handler.text1, 'string', ['Result: ' num2str(x)])
 	tiledlayout(2,1)
