@@ -13,18 +13,19 @@ c  = 299792458; %velocidade da luz em m/s
 
 %---------------------- Definição de variáveis de controle -------------%
 
-l=1000;						%distância l definida pelo grupo de 1000mm (1m)
-dz=25;						%número de divisões de dessa distancia que resultam no dz (1000/2000 -> dz=0.5)
-Valormax = 50;
-Z = linspace(0,l,dz);		%distribuição uniforme dos pontos 'dz's ao longo da linha de transmissão
-uf = 1/(0.9*c);				%valor para atingir o ponto estacionário
+l=1;						%distância l definida pelo grupo de 1000mm (1m)
+aux=500;					%número de divisões de dessa distancia que resultam no dz (1000/2000 -> dz=0.5)
+Valormax =aux;
+dz=l/aux;
+Z = linspace(0,l,aux);		%distribuição uniforme dos pontos 'dz's ao longo da linha de transmissão
+uf = (0.9*c);				%valor para atingir o ponto estacionário
 dt = 0.5;					%dt em nano segundo (ns)
-t  = 1.5*uf*10.^(12);		%valor tmaximo de amostragem do FDTD	
+t  = 10.^(12)*10*1/(uf);			%valor tmaximo de amostragem do FDTD	
 
 %-----------------------Constantes calculadas---------------------------%
-c1 = -dt*10.^(-12)/(10.^(-7)*0.1);				%Equação de Cálculo da Constante
+c1 = -dt*10.^(-12)/(10.^(-7)*dz);				%Equação de Cálculo da Constante
 c2 = 1;											%Valor da Constante Calculado
-c3 = -dt*10.^(-12)/(10.^(-11)*0.1);				%Equação de Cálculo da Constante
+c3 = -dt*10.^(-12)/(10.^(-11)*dz);				%Equação de Cálculo da Constante
 c4 = 1;											%Valor da constante Calculado
 Vf1= 2;											%Valor inicial da Fonte 1
 Vf2= 1; 										%Valor Inicial da Fonte 2
@@ -69,19 +70,16 @@ I6aux = zeros(1,Valormax);
 		%Acrescenta as fontes e correntes iniciais no momento t=0
 		V1(1) = Vf1;	 	 %Intruduz a fonte 1 para o caso 1
 		I1(2) = If1(1);	 	 %Intruduz a corrente da fonte 2 para o caso 1
-		V1aux(1) = Vf1;	 	 %Intruduz a fonte 1 para o caso 
 		I1aux(1) = If1(1);	 %Intruduz a corrente da fonte 2 para o caso 1
 
 
 		V2(1) = Vf1;	 %Introduz a fonte 1 para o caso 2
 		I2(1) = If1(2);	 %Introduz a corrente da fonte 2 para o caso 2	
-		V2aux(1) = Vf1;	 %Introduz a fonte 1 para o caso 2
 		I2aux(1) = If1(2);	 %Introduz a corrente da fonte 2 para o caso 2
 
 
 		V3(1) = Vf1;	 %Introduz a fonte 1 para o caso 3
 		I3(1) = If1(3);	 %Introduz a corrente da fonte 2 para o caso 
-		V3aux(1) = Vf1;	 %Introduz a fonte 1 para o caso 3
 		I2aux(1) = If1(2);	 %Introduz a corrente da fonte 2 para o caso 2
 		
 
@@ -102,7 +100,7 @@ for n=0:dt:t          %Loop de atualização dos gráficos
 	end
 	for k=2:Valormax-1		 %Loop de cálculo dos gráficos
 
-		V1(k+1)=c3*(I1(k+1)-I1(k))+c4*V1aux(k);
+		V1(k)=c3*(I1(k+1)-I1(k))+c4*V1aux(k);
 	end
 
 	%------------------ Passando os valores do Original para o auxiliar --------------------%
@@ -117,14 +115,14 @@ for n=0:dt:t          %Loop de atualização dos gráficos
 	disp(s);
 	tiledlayout(2,1)
 	nexttile
-	plot(Z,V1(1:2:49))
+	plot(Z,V1)
 	xlabel('Z(mm)')
 	ylabel('U(V)') 
 	grid on
 	grid minor
 	legend('V(t) \rightarrow R_L = \infty')
 	nexttile
-	plot(Z,I1(2:2:50))
+	plot(Z,I1)
 	xlabel('dz(cm)')
 	ylabel('i(A)')
 	grid on
@@ -147,7 +145,7 @@ for n=0:dt:t          %Loop de atualização dos gráficos
 	end
 	for k=2:Valormax-1		 %Loop de cálculo dos gráficos
 
-		V2(k+1)=c3*(I2(k+1)-I2(k))+c4*V2aux(k);
+		V2(k)=c3*(I2(k+1)-I2(k))+c4*V2aux(k);
 	end
 
 	%------------------ Passando os valores do Original para o auxiliar --------------------%
@@ -166,14 +164,14 @@ for n=0:dt:t          %Loop de atualização dos gráficos
 	%set(handler.text1, 'string', ['Result: ' num2str(x)])
 	tiledlayout(2,1)
 	nexttile
-	plot(Z,V2(1:2:49))
+	plot(Z,V2)
 	xlabel('Z(mm)')
 	ylabel('U(V)')  
 	grid on
 	grid minor
 	legend('V(t) \rightarrow R_L = 0')
 	nexttile
-	plot(Z,I2(2:2:50))
+	plot(Z,I2)
 	xlabel('dz(cm)')
 	ylabel('i(A)')
 	grid on
@@ -191,7 +189,7 @@ for n=0:dt:t          %Loop de atualização dos gráficos
 	end
 	for k=2:Valormax-1		 %Loop de cálculo dos gráficos
 
-		V3(k+1)=c3*(I3(k+1)-I3(k))+c4*V3aux(k);
+		V3(k)=c3*(I3(k+1)-I3(k))+c4*V3aux(k);
 	end
 
 
@@ -212,14 +210,14 @@ for n=0:dt:t          %Loop de atualização dos gráficos
 	%set(handler.text1, 'string', ['Result: ' num2str(x)])
 	tiledlayout(2,1)
 	nexttile
-	plot(Z,V3(1:2:49))
+	plot(Z,V3)
 	xlabel('dz(cm)')
 	ylabel('V(t) (V)') 
 	grid on
 	grid minor
 	legend('V(t) \rightarrow R_L = 100\Omega')
 	nexttile
-	plot(Z,I3(2:2:50))
+	plot(Z,I3)
 	xlabel('dz(cm)')
 	ylabel('i(A)')
 	grid on
