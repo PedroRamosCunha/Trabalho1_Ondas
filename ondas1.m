@@ -74,15 +74,15 @@ elseif button == 3
 elseif button == 4
 		
 		V0 = Vf2;																%passagem de parâmetro para valor da fonte
-		titulo = strcat("Tensão e Corrente das fonte 2 e Rl = 100 Ohms");
-		legendaTensao = strcat("V(t) \rightarrow R_L = 100 \Omega");
+		titulo = strcat("Tensão e Corrente das fonte 2 e Rl = Infinito");
+		legendaTensao = strcat("V(t) \rightarrow R_L = \infty");
 		legendaCorrente = strcat("I(t) \rightarrow R_L = 100 \Omega");
 elseif button == 5
 
 		V0 = Vf2;																%passagem de parâmetro para valor da fonte
-		titulo = strcat("Tensão e Corrente das fonte 2 e Rl = 100 Ohms");
-		legendaTensao = strcat("V(t) \rightarrow R_L = 100 \Omega");
-		legendaCorrente = strcat("I(t) \rightarrow R_L = 100 \Omega");
+		titulo = strcat("Tensão e Corrente das fonte 2 e Rl = 0");
+		legendaTensao = strcat("V(t) \rightarrow R_L = 0");
+		legendaCorrente = strcat("I(t) \rightarrow R_L = 0");
 elseif button == 6
 		
 		V0 = Vf2;																%passagem de parâmetro para valor da fonte
@@ -104,7 +104,7 @@ for y=2:tmax
 	end
 
 		V(y,1)=(1-c5)*V(y-1,1)-c5*Rs*I(y-1,1)+c5*V0;					%Equação 12 do relatório
-		for k=2:Valormax-1		 										%Loop de cálculo dos gráficos
+		for k=2:Valormax		 										%Loop de cálculo dos gráficos
 
 			I(y,k)=c1*(V(y-1,k)-V(y-1,k-1))+c2*I(y-1,k);				%Equação 7 do relatório
 		end
@@ -128,8 +128,7 @@ for y=2:tmax
 end
 
 for n=1:tmax          												%Loop de atualização dos gráficos
-	figure(h1)
-	s = strcat("Tempo: ",num2str(n*dt)," ps");						%indicação de tempo no console, para cada nova atualização do gráfico
+	figure(	s = strcat("Tempo: ",num2str(n*dt)," ps");						%indicação de tempo no console, para cada nova atualização do gráfico
 	disp(s);
 	tiledlayout(2,1)
 	nexttile
