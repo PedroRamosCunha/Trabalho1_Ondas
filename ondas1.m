@@ -96,16 +96,13 @@ end
 
 h1 = figure('Name',titulo,'NumberTitle','off');	%Abre uma janela genérica para receber os gráficos
 
-for y=1:tmax
+for y=2:tmax
 	
 	if (flag==1) && (button>=4) && (tdesliga<=(dt*(y-1)))	%Condição de desligamento da fonte 2
 		V0			= 0;
 		flag 		= 0;
 	end
 
-	if(y==1)															%Condição para contorno inicial para t=0
-		V(y,: ) = 0;
-	else 																%Condição de contorno inicial para o resto de 't's 
 		V(y,1)=(1-c5)*V(y-1,1)-c5*Rs*I(y-1,1)+c5*V0;					%Equação 12 do relatório
 		for k=2:Valormax-1		 										%Loop de cálculo dos gráficos
 
@@ -128,7 +125,6 @@ for y=1:tmax
 
 			V(y,Valormax)=0;											%Consideração Segundo a citação bibliográfica 3
 		end	
-	end
 end
 
 for n=1:tmax          												%Loop de atualização dos gráficos
