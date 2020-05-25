@@ -45,16 +45,6 @@ tmax=uint32(t);
 V = zeros(tmax,Valormax);		%Matriz com V(n+1) valores calculados de tensão para os dz no instante t para f1 Rl=\infty
 I = zeros(tmax,Valormax);		%Matriz com I(n+1/2) valores calculados de corrente para os dz no instante t para f1 Rl=\infty
 
-%-------------------------------------- Vetores  auxiliares ----------------------------------------%
-%	Esses vetores auxiliares funcionam da seguinte forma:											%
-%	 - auxiliares de tensão são os valores de V atrasados em n	 									%
-%	 - auxiliares de corrente são para valores em para tempo no instante n-1/2						%
-%---------------------------------------------------------------------------------------------------%
-Vaux = zeros(1,Valormax);		%Matriz com V(n) valores calculados de tensão para os dz no instante t para f1 Rl=\infty
-Iaux = zeros(1,Valormax);		%Matriz com I(n-1/2) valores calculados de corrente para os dz no instante t para f1 Rl=\infty
-
-		
-
 
 
 button = menu('Qual Caso deseja visualizar o gráfico?','Fonte 1 para R = Infinito', 'Fonte 1 para R = 0', 'Fonte 1 para R 100 Ohms', 'Fonte 2 para R = Infinito', 'Fonte 2 para R = 0', 'Fonte 2 para R 100 Ohms');
@@ -114,40 +104,31 @@ for y=1:tmax
 	end
 
 	if(y==1)															%Condição para contorno inicial para t=0
-		V(y,1)=(1-c5)*Vaux(1,1)-c5*Rs*Iaux(1,1)+0;						%Equação 12 do relatório
+		V(y,: ) = 0;
 	else 																%Condição de contorno inicial para o resto de 't's 
-		V(y,1)=(1-c5)*Vaux(1,1)-c5*Rs*Iaux(1,1)+c5*V0;					%Equação 12 do relatório
+		V(y,1)=(1-c5)*V(y-1,1)-c5*Rs*I(y-1,1)+c5*V0;					%Equação 12 do relatório
+		for k=2:Valormax-1		 										%Loop de cálculo dos gráficos
+
+			I(y,k)=c1*(V(y-1,k)-V(y-1,k-1))+c2*I(y-1,k);				%Equação 7 do relatório
+		end
+		for k=2:Valormax-1		 										%Loop de cálculo dos gráficos
+
+			V(y,k)=c3*(I(y,k+1)-I(y,k))+c4*V(y-1,k);					%Equação 7 do relatório
+		end
+
+		if(button==3) || (button==6)
+
+		 	V(y,Valormax)=(1-c6)*V(y-1,Valormax)+c6*100*I(y-1,Valormax-1); %Equação 15 do relatório
+
+		elseif (button==1) || (button==4)
+
+			V(y,Valormax)=V(y,Valormax-1);								%Consideração Segundo a citação bibliográfica 3
+
+		elseif (button==2) || (button==5)
+
+			V(y,Valormax)=0;											%Consideração Segundo a citação bibliográfica 3
+		end	
 	end
-
-
-	for k=2:Valormax-1		 											%Loop de cálculo dos gráficos
-
-		I(y,k)=c1*(Vaux(k)-Vaux(k-1))+c2*Iaux(k);						%Equação 7 do relatório
-	end
-	for k=2:Valormax-1		 											%Loop de cálculo dos gráficos
-
-		V(y,k)=c3*(I(y,k+1)-I(y,k))+c4*Vaux(k);							%Equação 7 do relatório
-	end
-
-	if(button==3) || (button==6)
-
-	 	V(y,Valormax)=(1-c6)*Vaux(1,Valormax)+c6*100*Iaux(1,Valormax-1); %Equação 15 do relatório
-
-	elseif (button==1) || (button==4)
-
-		V(y,Valormax)=V(y,Valormax-1);								%Consideração Segundo a citação bibliográfica 3
-		
-	elseif (button==2) || (button==5)
-
-		V(y,Valormax)=0;											%Consideração Segundo a citação bibliográfica 3
-	end	
-	%------------------ Passando os valores do Original para o auxiliar --------------------%
-	%																						%
-	%	Note: o vetor auxiliar sempre está um dt atrasado em relação ao seu Original 		%
-	%																						%
-	%---------------------------------------------------------------------------------------%
-	Iaux=I(y,1:end);												%Tranposição de valor n+1/2 para n-1/2
-	Vaux=V(y,1:end);												%Tranposição de valor n+1 para n
 end
 
 for n=1:tmax          												%Loop de atualização dos gráficos
