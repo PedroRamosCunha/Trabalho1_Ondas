@@ -42,16 +42,16 @@ tmax=uint32(t);
 %--------------------------Calculo dos Vetores--------------------------%
 
 %inicializa todos os vetores como zero
-V = zeros(tmax,Valormax);		%Vetor com V(n+1) valores calculados de tensão para os dz no instante t para f1 Rl=\infty
-I = zeros(tmax,Valormax);		%Vetor com I(n+1) valores calculados de corrente para os dz no instante t para f1 Rl=\infty
+V = zeros(tmax,Valormax);		%Matriz com V(n+1) valores calculados de tensão para os dz no instante t para f1 Rl=\infty
+I = zeros(tmax,Valormax);		%Matriz com I(n+1/2) valores calculados de corrente para os dz no instante t para f1 Rl=\infty
 
 %-------------------------------------- Vetores  auxiliares ----------------------------------------%
 %	Esses vetores auxiliares funcionam da seguinte forma:											%
 %	 - auxiliares de tensão são os valores de V atrasados em n	 									%
 %	 - auxiliares de corrente são para valores em para tempo no instante n-1/2						%
 %---------------------------------------------------------------------------------------------------%
-Vaux = zeros(1,Valormax);		
-Iaux = zeros(1,Valormax);
+Vaux = zeros(1,Valormax);		%Matriz com V(n) valores calculados de tensão para os dz no instante t para f1 Rl=\infty
+Iaux = zeros(1,Valormax);		%Matriz com I(n-1/2) valores calculados de corrente para os dz no instante t para f1 Rl=\infty
 
 		
 
@@ -62,41 +62,40 @@ button = menu('Qual Caso deseja visualizar o gráfico?','Fonte 1 para R = Infini
 
 if button == 1
 
-		V0 = Vf1;
-		titulo = strcat("Tensão e Corrente das fonte 1 e Rl = Infinito");
+		V0 = Vf1;																%passagem de parâmetro para valor da fonte
+		titulo = strcat("Tensão e Corrente das fonte 1 e Rl = Infinito");	
 		legendaTensao = strcat("V(t) \rightarrow R_L = \infty");
 		legendaCorrente = strcat("I(t) \rightarrow R_L = \infty");
 
 elseif button == 2
 
-		V0 = Vf1;
+		V0 = Vf1;																%passagem de parâmetro para valor da fonte	
 		titulo = strcat("Tensão e Corrente das fonte 1 e Rl = 0");
 		legendaTensao = strcat("V(t) \rightarrow R_L = 0");
 		legendaCorrente = strcat("I(t) \rightarrow R_L = 0");
 
 elseif button == 3
 
-		V0 = Vf1;
+		V0 = Vf1;																%passagem de parâmetro para valor da fonte
 		titulo = strcat("Tensão e Corrente das fonte 1 e Rl = 100 Ohms");
 		legendaTensao = strcat("V(t) \rightarrow R_L = 100 \Omega");
 		legendaCorrente = strcat("I(t) \rightarrow R_L = 100 \Omega");
 	
-
 elseif button == 4
 		
-		V0 = Vf2;
+		V0 = Vf2;																%passagem de parâmetro para valor da fonte
 		titulo = strcat("Tensão e Corrente das fonte 2 e Rl = 100 Ohms");
 		legendaTensao = strcat("V(t) \rightarrow R_L = 100 \Omega");
 		legendaCorrente = strcat("I(t) \rightarrow R_L = 100 \Omega");
 elseif button == 5
 
-		V0 = Vf2;
+		V0 = Vf2;																%passagem de parâmetro para valor da fonte
 		titulo = strcat("Tensão e Corrente das fonte 2 e Rl = 100 Ohms");
 		legendaTensao = strcat("V(t) \rightarrow R_L = 100 \Omega");
 		legendaCorrente = strcat("I(t) \rightarrow R_L = 100 \Omega");
 elseif button == 6
 		
-		V0 = Vf2;
+		V0 = Vf2;																%passagem de parâmetro para valor da fonte
 		titulo = strcat("Tensão e Corrente das fonte 2 e Rl = 100 Ohms");
 		legendaTensao = strcat("V(t) \rightarrow R_L = 100 \Omega");
 		legendaCorrente = strcat("I(t) \rightarrow R_L = 100 \Omega");
@@ -109,60 +108,61 @@ h1 = figure('Name',titulo,'NumberTitle','off');	%Abre uma janela genérica para 
 
 for y=1:tmax
 	
-	if (flag==1) && (button>=4) && (tdesliga<=(dt*y))
+	if (flag==1) && (button>=4) && (tdesliga<=(dt*(y-1)))	%Condição de desligamento da fonte 2
 		V0			= 0;
 		flag 		= 0;
 	end
 
-	if(y==1)
-		V(y,1)=(1-c5)*Vaux(1,1)-2*Iaux(1,1)+0;
-	else
-		V(y,1)=(1-c5)*Vaux(1,1)-2*Iaux(1,1)+2*V0/Rs;
+	if(y==1)															%Condição para contorno inicial para t=0
+		V(y,1)=(1-c5)*Vaux(1,1)-c5*Rs*Iaux(1,1)-2*Iaux(1,1)+0;			%Equação 12 do relatório
+	else 																%Condição de contorno inicial para o resto de 't's 
+		V(y,1)=(1-c5)*Vaux(1,1)-2*Iaux(1,1)+c5*V0;						%Equação 12 do relatório
 	end
 
-	for k=2:Valormax-1		 %Loop de cálculo dos gráficos
 
-		I(y,k)=c1*(Vaux(k)-Vaux(k-1))+c2*Iaux(k);
+	for k=2:Valormax-1		 											%Loop de cálculo dos gráficos
+
+		I(y,k)=c1*(Vaux(k)-Vaux(k-1))+c2*Iaux(k);						%Equação 7 do relatório
 	end
-	for k=2:Valormax-1		 %Loop de cálculo dos gráficos
+	for k=2:Valormax-1		 											%Loop de cálculo dos gráficos
 
-		V(y,k)=c3*(I(y,k+1)-I(y,k))+c4*Vaux(k);
+		V(y,k)=c3*(I(y,k+1)-I(y,k))+c4*Vaux(k);							%Equação 7 do relatório
 	end
 
 	if(button==3) || (button==6)
 
-	 	V(y,Valormax)=(1-c6)*Vaux(1,Valormax)+2*Iaux(1,Valormax-1);
+	 	V(y,Valormax)=(1-c6)*Vaux(1,Valormax)+c6*100*Iaux(1,Valormax-1); %Equação 15 do relatório
 
 	elseif (button==1) || (button==4)
 
-		V(y,Valormax)=V(y,Valormax-1);
+		V(y,Valormax)=V(y,Valormax-1);								%Consideração Segundo a citação bibliográfica 3
 	elseif (button==2) || (button==5)
 
-		V(y,Valormax)=0;
+		V(y,Valormax)=0;											%Consideração Segundo a citação bibliográfica 3
 	end	
 	%------------------ Passando os valores do Original para o auxiliar --------------------%
 	%																						%
 	%	Note: o vetor auxiliar sempre está um dt atrasado em relação ao seu Original 		%
 	%																						%
 	%---------------------------------------------------------------------------------------%
-	Iaux=I(y,1:end);
-	Vaux=V(y,1:end);
+	Iaux=I(y,1:end);												%Tranposição de valor n+1/2 para n-1/2
+	Vaux=V(y,1:end);												%Tranposição de valor n+1 para n
 end
 
-for n=1:tmax          %Loop de atualização dos gráficos
+for n=1:tmax          												%Loop de atualização dos gráficos
 	figure(h1)
-	s = strcat("Tempo: ",num2str(n*dt)," ps");
+	s = strcat("Tempo: ",num2str(n*dt)," ps");						%indicação de tempo no console, para cada nova atualização do gráfico
 	disp(s);
 	tiledlayout(2,1)
 	nexttile
-	plot(Z,V(n,:))
+	plot(Z,V(n,:))													%Gráfico de V(t)
 	xlabel('Z(m)')
 	ylabel('U(V)') 
 	grid on
 	grid minor
 	legend(legendaTensao)
 	nexttile
-	plot(Z,I(n,:))
+	plot(Z,I(n,:))													%Gráfico de I(t)
 	xlabel('Z (m)')
 	ylabel('i(A)')
 	grid on
