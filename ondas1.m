@@ -128,7 +128,7 @@ for y=2:tmax
 end
 
 for n=1:tmax          												%Loop de atualização dos gráficos
-	figure(	s = strcat("Tempo: ",num2str(n*dt)," ps");						%indicação de tempo no console, para cada nova atualização do gráfico
+	s = strcat("Tempo: ",num2str(n*dt)," ps");						%indicação de tempo no console, para cada nova atualização do gráfico
 	disp(s);
 	tiledlayout(2,1)
 	nexttile
