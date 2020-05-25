@@ -104,9 +104,9 @@ for y=2:tmax
 	end
 
 		V(y,1)=(1-c5)*V(y-1,1)-c5*Rs*I(y-1,1)+c5*V0;					%Equação 12 do relatório
-		for k=2:Valormax-1		 										%Loop de cálculo dos gráficos
+		for k=1:Valormax-1		 										%Loop de cálculo dos gráficos
 
-			I(y,k)=c1*(V(y-1,k)-V(y-1,k-1))+c2*I(y-1,k);				%Equação 7 do relatório
+			I(y,k)=c1*(V(y-1,k+1)-V(y-1,k))+c2*I(y-1,k);				%Equação 7 do relatório
 		end
 		for k=2:Valormax-1		 										%Loop de cálculo dos gráficos
 
