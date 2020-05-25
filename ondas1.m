@@ -13,25 +13,29 @@ flag = 1;
 
 %-----------------------Constantes--------------------------------------%
 
-c  = 299792458; %velocidade da luz em m/s
-
+c  = 299792458; 					%velocidade da luz em m/s
+Rs = 75;							%Resistencia antes de entrar na linha de Transmissão
+C  = 7.41*10.^(-11);				%Capacitância da Linha Calculada
+L  = 1.85*10.^(-7);					%Indutância da linha
 %---------------------- Definição de variáveis de controle -------------%
 
-l=1;								%distância l definida pelo grupo de 1000mm (1m)
-aux=500;							%número de divisões de dessa distancia que resultam no dz (1000/2000 -> dz=0.5)
-Valormax =aux;
-dz=l/aux;
+l=1;								%distância l definida pelo grupo de 1m
+aux=500;							%número de pontos de análiste ao longo da linha de transmissão
+Valormax =aux;						%Tamanho máximo do vetor de armazenamento dos pontos
+dz=l/aux;							%Valore dz entre os pontos discretizados para análisa
 Z = linspace(0,l,aux);				%distribuição uniforme dos pontos 'dz's ao longo da linha de transmissão
 uf = (0.9*c);						%valor para atingir o ponto estacionário
-maxt=dz/uf;						
+maxt=dz/uf;							%variável de cálculo de de tempo de dt em segundos (s)
 dt = 0.9*maxt*10^(12);				%dt em nano segundo (ns)
 t  = 10.^(12)*10*l/(uf);			%valor tmaximo de amostragem do FDTD
 tdesliga = 10.^(12)*l/(10*uf);	
 %-----------------------Constantes calculadas---------------------------%
-c1 = -dt*10.^(-12)/(1.85*10.^(-7)*dz);				%Equação de Cálculo da Constante
+c1 = -dt*10.^(-12)/(L*dz);						%Equação de Cálculo da Constante
 c2 = 1;											%Valor da Constante Calculado
-c3 = -dt*10.^(-12)/(7.41*10.^(-11)*dz);				%Equação de Cálculo da Constante
+c3 = -dt*10.^(-12)/(C*dz);						%Equação de Cálculo da Constante
 c4 = 1;											%Valor da constante Calculado
+c5 = 2*dt*10.^(-12)/(Rs*C*dz);					%Equação de Cálculo da Constante
+c6 = 2*dt*10.^(-12)/(100*C*dz);					%Equação de Cálculo da Constante
 Vf1= 2;											%Valor inicial da Fonte 1
 Vf2= 1; 										%Valor Inicial da Fonte 2
 If1= [0 , 0.016 , 0.0089];						%Corrente inicial da corrente para Fonte 1 para os casos 1,2 e 3
@@ -60,51 +64,47 @@ button = menu('Qual Caso deseja visualizar o gráfico?','Fonte 1 para R = Infini
 
 if button == 1
 
-		%Acrescenta as fontes e correntes iniciais no momento t=0
-		V(:,1) = Vf1;	 	 	%Intruduz a fonte 1 para o caso 1
-		I(:,1) = If1(1);	 	 %Intruduz a corrente da fonte 2 para o caso 1
-		Iaux(1) = If1(1);	 %Intruduz a corrente da fonte 2 para o caso 1
-
+		V0 = Vf1;
+		Iaux(1,1)=If1(1,1);
 		titulo = strcat("Tensão e Corrente das fonte 1 e Rl = Infinito");
 		legendaTensao = strcat("V(t) \rightarrow R_L = \infty");
 		legendaCorrente = strcat("I(t) \rightarrow R_L = \infty");
+
 elseif button == 2
 
-
-		V(:,1) = Vf1;	 		 %Introduz a fonte 1 para o caso 2
-		I(:,1) = If1(2);	 	 %Introduz a corrente da fonte 2 para o caso 2	
-		Iaux(1) = If1(2);	 %Introduz a corrente da fonte 2 para o caso 2
+		V0 = Vf1;
+		Iaux(1,1)=If1(1,2);
 		titulo = strcat("Tensão e Corrente das fonte 1 e Rl = 0");
 		legendaTensao = strcat("V(t) \rightarrow R_L = 0");
 		legendaCorrente = strcat("I(t) \rightarrow R_L = 0");
 
 elseif button == 3
-		V(:,1) = Vf1;			 %Introduz a fonte 1 para o caso 3
-		I(:,1) = If1(3);		 %Introduz a corrente da fonte 2 para o caso 
-		Iaux(1) = If1(3);	 %Introduz a corrente da fonte 2 para o caso 2
+
+		V0 = Vf1;
+		Iaux(1,1)=If1(1,3);
 		titulo = strcat("Tensão e Corrente das fonte 1 e Rl = 100 Ohms");
 		legendaTensao = strcat("V(t) \rightarrow R_L = 100 \Omega");
 		legendaCorrente = strcat("I(t) \rightarrow R_L = 100 \Omega");
 	
 
 elseif button == 4
-		V(:,1) = Vf2;			 %Introduz a fonte 1 para o caso 3
-		I(:,1) = If2(1);		 %Introduz a corrente da fonte 2 para o caso 
-		Iaux(1) = If1(1);	 %Introduz a corrente da fonte 2 para o caso 2
+		
+		V0 = Vf2;
+		Iaux(1,1)=If2(1,1);
 		titulo = strcat("Tensão e Corrente das fonte 2 e Rl = 100 Ohms");
 		legendaTensao = strcat("V(t) \rightarrow R_L = 100 \Omega");
 		legendaCorrente = strcat("I(t) \rightarrow R_L = 100 \Omega");
 elseif button == 5
-		V(:,1) = Vf2;			 %Introduz a fonte 1 para o caso 3
-		I(:,1) = If2(2);		 %Introduz a corrente da fonte 2 para o caso 
-		Iaux(1) = If1(2);	 %Introduz a corrente da fonte 2 para o caso 2
+
+		V0 = Vf2;
+		Iaux(1,1)=If1(1,2);
 		titulo = strcat("Tensão e Corrente das fonte 2 e Rl = 100 Ohms");
 		legendaTensao = strcat("V(t) \rightarrow R_L = 100 \Omega");
 		legendaCorrente = strcat("I(t) \rightarrow R_L = 100 \Omega");
-else
-		V(:,1) = Vf2;			 %Introduz a fonte 1 para o caso 3
-		I(:,1) = If2(3);		 %Introduz a corrente da fonte 2 para o caso 
-		Iaux(1) = If2(3);	 %Introduz a corrente da fonte 2 para o caso 2
+elseif button == 6
+		
+		V0 = Vf2;
+		Iaux(1,1)=If1(1,3);
 		titulo = strcat("Tensão e Corrente das fonte 2 e Rl = 100 Ohms");
 		legendaTensao = strcat("V(t) \rightarrow R_L = 100 \Omega");
 		legendaCorrente = strcat("I(t) \rightarrow R_L = 100 \Omega");
@@ -116,11 +116,13 @@ end
 h1 = figure('Name',titulo,'NumberTitle','off');	%Abre uma janela genérica para receber os gráficos
 
 for y=1:tmax
-
-	if (flag==1) && (button>=4)
-		V(y,1)		= 0;
-		Iaux(y,1)	= 0;
+	
+	if (flag==1) && (button>=4) && (tdesliga<=(dt*y))
+		V0			= 0;
+		flag 		= 0;
 	end
+
+	V(y,1)=(1-c5)*Vaux(1,1)-2*Iaux(1,1)+2*Vf1;
 
 	for k=2:Valormax-1		 %Loop de cálculo dos gráficos
 
@@ -131,6 +133,17 @@ for y=1:tmax
 		V(y,k)=c3*(I(y,k+1)-I(y,k))+c4*Vaux(k);
 	end
 
+	if(button==3) || (button==6)
+
+	 	V(y,Valormax)=(1-c6)*Vaux(1,Valormax)+2*Iaux(1,Valormax-1);
+
+	elseif (button==1) || (button==4)
+
+		V(y,Valormax)=V(y,Valormax-1);
+	elseif (button==2) || (button==5)
+
+		V(y,Valormax)=0;
+	end	
 	%------------------ Passando os valores do Original para o auxiliar --------------------%
 	%																						%
 	%	Note: o vetor auxiliar sempre está um dt atrasado em relação ao seu Original 		%
