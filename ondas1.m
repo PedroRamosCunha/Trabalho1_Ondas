@@ -114,9 +114,9 @@ for y=1:tmax
 	end
 
 	if(y==1)															%Condição para contorno inicial para t=0
-		V(y,1)=(1-c5)*Vaux(1,1)-c5*Rs*Iaux(1,1)-2*Iaux(1,1)+0;			%Equação 12 do relatório
+		V(y,1)=(1-c5)*Vaux(1,1)-c5*Rs*Iaux(1,1)+0;						%Equação 12 do relatório
 	else 																%Condição de contorno inicial para o resto de 't's 
-		V(y,1)=(1-c5)*Vaux(1,1)-2*Iaux(1,1)+c5*V0;						%Equação 12 do relatório
+		V(y,1)=(1-c5)*Vaux(1,1)-c5*Rs*Iaux(1,1)+c5*V0;					%Equação 12 do relatório
 	end
 
 
@@ -136,6 +136,7 @@ for y=1:tmax
 	elseif (button==1) || (button==4)
 
 		V(y,Valormax)=V(y,Valormax-1);								%Consideração Segundo a citação bibliográfica 3
+		
 	elseif (button==2) || (button==5)
 
 		V(y,Valormax)=0;											%Consideração Segundo a citação bibliográfica 3
