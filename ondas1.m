@@ -38,8 +38,6 @@ c5 = 2*dt*10.^(-12)/(Rs*C*dz);					%Equação de Cálculo da Constante
 c6 = 2*dt*10.^(-12)/(100*C*dz);					%Equação de Cálculo da Constante
 Vf1= 2;											%Valor inicial da Fonte 1
 Vf2= 1; 										%Valor Inicial da Fonte 2
-If1= [0 , 0.016 , 0.0089];						%Corrente inicial da corrente para Fonte 1 para os casos 1,2 e 3
-If2= [0 , 0.008 , 0.0044];						%Corrente inicial da corrente para Fonte 2 para os casos 1,2 e 3
 tmax=uint32(t);
 %--------------------------Calculo dos Vetores--------------------------%
 
@@ -65,7 +63,6 @@ button = menu('Qual Caso deseja visualizar o gráfico?','Fonte 1 para R = Infini
 if button == 1
 
 		V0 = Vf1;
-		Iaux(1,1)=If1(1,1);
 		titulo = strcat("Tensão e Corrente das fonte 1 e Rl = Infinito");
 		legendaTensao = strcat("V(t) \rightarrow R_L = \infty");
 		legendaCorrente = strcat("I(t) \rightarrow R_L = \infty");
@@ -73,7 +70,6 @@ if button == 1
 elseif button == 2
 
 		V0 = Vf1;
-		Iaux(1,1)=If1(1,2);
 		titulo = strcat("Tensão e Corrente das fonte 1 e Rl = 0");
 		legendaTensao = strcat("V(t) \rightarrow R_L = 0");
 		legendaCorrente = strcat("I(t) \rightarrow R_L = 0");
@@ -81,7 +77,6 @@ elseif button == 2
 elseif button == 3
 
 		V0 = Vf1;
-		Iaux(1,1)=If1(1,3);
 		titulo = strcat("Tensão e Corrente das fonte 1 e Rl = 100 Ohms");
 		legendaTensao = strcat("V(t) \rightarrow R_L = 100 \Omega");
 		legendaCorrente = strcat("I(t) \rightarrow R_L = 100 \Omega");
@@ -90,21 +85,18 @@ elseif button == 3
 elseif button == 4
 		
 		V0 = Vf2;
-		Iaux(1,1)=If2(1,1);
 		titulo = strcat("Tensão e Corrente das fonte 2 e Rl = 100 Ohms");
 		legendaTensao = strcat("V(t) \rightarrow R_L = 100 \Omega");
 		legendaCorrente = strcat("I(t) \rightarrow R_L = 100 \Omega");
 elseif button == 5
 
 		V0 = Vf2;
-		Iaux(1,1)=If1(1,2);
 		titulo = strcat("Tensão e Corrente das fonte 2 e Rl = 100 Ohms");
 		legendaTensao = strcat("V(t) \rightarrow R_L = 100 \Omega");
 		legendaCorrente = strcat("I(t) \rightarrow R_L = 100 \Omega");
 elseif button == 6
 		
 		V0 = Vf2;
-		Iaux(1,1)=If1(1,3);
 		titulo = strcat("Tensão e Corrente das fonte 2 e Rl = 100 Ohms");
 		legendaTensao = strcat("V(t) \rightarrow R_L = 100 \Omega");
 		legendaCorrente = strcat("I(t) \rightarrow R_L = 100 \Omega");
@@ -122,7 +114,11 @@ for y=1:tmax
 		flag 		= 0;
 	end
 
-	V(y,1)=(1-c5)*Vaux(1,1)-2*Iaux(1,1)+2*Vf1;
+	if(y==1)
+		V(y,1)=(1-c5)*Vaux(1,1)-2*Iaux(1,1)+0;
+	else
+		V(y,1)=(1-c5)*Vaux(1,1)-2*Iaux(1,1)+2*V0/Rs;
+	end
 
 	for k=2:Valormax-1		 %Loop de cálculo dos gráficos
 
